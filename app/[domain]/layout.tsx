@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ReactNode } from "react";
-import prisma from "@/lib/prisma";
-import CTA from "@/components/cta";
-import ReportAbuse from "@/components/report-abuse";
+import prisma from "@/prisma";
+import CTA from "@/modules/sites/components/cta";
+import ReportAbuse from "@/modules/sites/components/report-abuse";
 import { notFound, redirect } from "next/navigation";
-import { getSiteData } from "@/lib/fetchers";
-import { fontMapper } from "@/styles/fonts";
+import { fontMapper } from "@/lib/styles/fonts";
 import { Metadata } from "next";
+import { getSiteData } from "@/modules/sites/fetchers";
 
 export async function generateMetadata({
   params,

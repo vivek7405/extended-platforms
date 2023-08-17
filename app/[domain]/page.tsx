@@ -2,9 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import BlurImage from "@/components/blur-image";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
-import BlogCard from "@/components/blog-card";
-import { getPostsForSite, getSiteData } from "@/lib/fetchers";
+import BlogCard from "@/modules/sites/components/blog-card";
 import Image from "next/image";
+import { getPostsForSite, getSiteData } from "@/modules/sites/fetchers";
 
 export default async function SiteHomePage({
   params,

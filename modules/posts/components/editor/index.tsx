@@ -11,10 +11,10 @@ import va from "@vercel/analytics";
 import TextareaAutosize from "react-textarea-autosize";
 import { EditorBubbleMenu } from "./bubble-menu";
 import { Post } from "@prisma/client";
-import { updatePost, updatePostMetadata } from "@/lib/actions";
 import { cn } from "@/lib/utils";
-import LoadingDots from "../icons/loading-dots";
+import LoadingDots from "../../../../components/icons/loading-dots";
 import { ExternalLink } from "lucide-react";
+import { updatePost, updatePostMetadata } from "../../actions";
 
 type PostWithSite = Post & { site: { subdomain: string | null } | null };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useDomainStatus } from "./use-domain-status";
+import { useDomainStatus } from "../../../lib/hooks/use-domain-status";
 import { getSubdomain } from "@/lib/domains";
 import { AlertCircle, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";

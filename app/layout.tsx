@@ -1,5 +1,5 @@
-import "@/styles/globals.css";
-import { cal, inter } from "@/styles/fonts";
+import "@/lib/styles/globals.css";
+import { cal, inter } from "@/lib/styles/fonts";
 import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 import { Metadata } from "next";

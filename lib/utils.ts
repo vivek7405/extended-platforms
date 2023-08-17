@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { customAlphabet } from "nanoid";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -57,3 +58,8 @@ export const toDateString = (date: Date) => {
 export const random = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
+export const nanoid = customAlphabet(
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  7,
+); // 7-character random string

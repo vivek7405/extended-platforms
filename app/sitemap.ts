@@ -1,5 +1,5 @@
+import { getPostsForSite } from "@/modules/sites/fetchers";
 import { headers } from "next/headers";
-import { getPostsForSite } from "@/lib/fetchers";
 
 export default async function Sitemap() {
   const headersList = headers();

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import prisma from "@/prisma";
 import { notFound, redirect } from "next/navigation";
 import SiteSettingsNav from "./nav";
 

@@ -6,8 +6,8 @@ import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 import { toast } from "sonner";
-import DomainStatus from "./domain-status";
-import DomainConfiguration from "./domain-configuration";
+import DomainStatus from "../../modules/sites/components/domain-status";
+import DomainConfiguration from "../../modules/sites/components/domain-configuration";
 import Uploader from "./uploader";
 import va from "@vercel/analytics";
 

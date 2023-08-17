@@ -1,5 +1,5 @@
 import Image from "next/image";
-import LoginButton from "./login-button";
+import LoginButton from "../../../../modules/auth/components/login-button";
 import { Suspense } from "react";
 
 export default function LoginPage() {
