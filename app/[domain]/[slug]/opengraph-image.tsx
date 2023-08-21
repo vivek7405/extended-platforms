@@ -12,9 +12,15 @@ export default async function PostOG({
   params: { domain: string; slug: string };
 }) {
   const { domain, slug } = params;
+  const decodedDomain = decodeURIComponent(domain);
 
-  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
+  const subdomain = decodedDomain.endsWith(
+    `.${process.env.NEXT_PUBLIC_DYNAMIC_ROOT_DOMAIN}`,
+  )
+    ? decodedDomain.replace(
+        `.${process.env.NEXT_PUBLIC_DYNAMIC_ROOT_DOMAIN}`,
+        "",
+      )
     : null;
 
   const response = await sql`
@@ -25,7 +31,7 @@ export default async function PostOG({
   WHERE 
     (
         site.subdomain = ${subdomain}
-        OR site."customDomain" = ${domain}
+        OR site."customDomain" = ${decodedDomain}
     )
     AND post.slug = ${slug}
   LIMIT 1;

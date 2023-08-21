@@ -14,7 +14,8 @@ export async function generateMetadata({
 }: {
   params: { domain: string };
 }): Promise<Metadata | null> {
-  const data = await getSiteData(params.domain);
+  const decodedDomain = decodeURIComponent(params.domain);
+  const data = await getSiteData(decodedDomain);
   if (!data) {
     return null;
   }
@@ -46,7 +47,7 @@ export async function generateMetadata({
       creator: "@vercel",
     },
     icons: [logo],
-    metadataBase: new URL(`https://${params.domain}`),
+    metadataBase: new URL(`https://${decodedDomain}`),
   };
 }
 
@@ -89,7 +90,8 @@ export default async function SiteLayout({
   children: ReactNode;
 }) {
   const { domain } = params;
-  const data = await getSiteData(domain);
+  const decodedDomain = decodeURIComponent(domain);
+  const data = await getSiteData(decodedDomain);
 
   if (!data) {
     notFound();
@@ -97,7 +99,7 @@ export default async function SiteLayout({
 
   // Optional: Redirect to custom domain if it exists
   if (
-    domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
+    decodedDomain.endsWith(`.${process.env.NEXT_PUBLIC_DYNAMIC_ROOT_DOMAIN}`) &&
     data.customDomain &&
     process.env.REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS === "true"
   ) {
@@ -126,8 +128,8 @@ export default async function SiteLayout({
 
       <div className="mt-20">{children}</div>
 
-      {params.domain == `demo.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}` ||
-      params.domain == `platformize.co` ? (
+      {decodedDomain ==
+      `demo.${process.env.NEXT_PUBLIC_DYNAMIC_ROOT_DOMAIN}` ? (
         <CTA />
       ) : (
         <ReportAbuse />

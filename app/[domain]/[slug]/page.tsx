@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import BlogCard from "@/modules/sites/components/blog-card";
+import SiteCard from "@/modules/posts/components/site-card";
 import BlurImage from "@/components/blur-image";
 import MDX from "@/components/mdx";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
@@ -11,7 +11,8 @@ export async function generateMetadata({
   params: { domain: string; slug: string };
 }) {
   const { domain, slug } = params;
-  const data = await getPostData(domain, slug);
+  const decodedDomain = decodeURIComponent(domain);
+  const data = await getPostData(decodedDomain, slug);
   if (!data) {
     return null;
   }
@@ -39,7 +40,8 @@ export default async function SitePostPage({
   params: { domain: string; slug: string };
 }) {
   const { domain, slug } = params;
-  const data = await getPostData(domain, slug);
+  const decodedDomain = decodeURIComponent(domain);
+  const data = await getPostData(decodedDomain, slug);
 
   if (!data) {
     notFound();
@@ -122,7 +124,7 @@ export default async function SitePostPage({
       {data.adjacentPosts && (
         <div className="mx-5 mb-20 grid max-w-screen-xl grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 xl:mx-auto xl:grid-cols-3">
           {data.adjacentPosts.map((data, index) => (
-            <BlogCard key={index} data={data} />
+            <SiteCard key={index} data={data} />
           ))}
         </div>
       )}

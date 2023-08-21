@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import BlurImage from "@/components/blur-image";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
-import BlogCard from "@/modules/sites/components/blog-card";
+import SiteCard from "@/modules/posts/components/site-card";
 import Image from "next/image";
 import { getPostsForSite, getSiteData } from "@/modules/sites/fetchers";
 
@@ -11,9 +11,10 @@ export default async function SiteHomePage({
 }: {
   params: { domain: string };
 }) {
+  const decodedDomain = decodeURIComponent(params.domain);
   const [data, posts] = await Promise.all([
-    getSiteData(params.domain),
-    getPostsForSite(params.domain),
+    getSiteData(decodedDomain),
+    getPostsForSite(decodedDomain),
   ]);
 
   if (!data) {
@@ -101,7 +102,7 @@ export default async function SiteHomePage({
           </h2>
           <div className="grid w-full grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 xl:grid-cols-3">
             {posts.slice(1).map((metadata, index) => (
-              <BlogCard key={index} data={metadata} />
+              <SiteCard key={index} data={metadata} />
             ))}
           </div>
         </div>
