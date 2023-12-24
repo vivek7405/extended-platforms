@@ -20,7 +20,7 @@ export interface BubbleMenuItem {
 
 type EditorBubbleMenuProps = Omit<BubbleMenuProps, "children">;
 
-export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props) => {
+export const EditorBubbleMenu: FC<EditorBubbleMenuProps> = (props: any) => {
   const items: BubbleMenuItem[] = [
     {
       name: "bold",

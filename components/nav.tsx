@@ -12,6 +12,8 @@ import {
   Menu,
   Newspaper,
   Settings,
+  FileCode,
+  Github,
 } from "lucide-react";
 import {
   useParams,
@@ -20,7 +22,6 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { FileCode, Github } from "lucide-react";
 import { getSiteFromPostId } from "@/modules/posts/actions";
 
 const externalLinks = [

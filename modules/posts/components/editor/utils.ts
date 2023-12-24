@@ -1,5 +1,4 @@
 import { EditorView } from "@tiptap/pm/view";
-import { BlobResult } from "@vercel/blob";
 import { toast } from "sonner";
 
 export const handleImageUpload = (
@@ -40,7 +39,7 @@ export const handleImageUpload = (
       }).then(async (res) => {
         // Successfully uploaded image
         if (res.status === 200) {
-          const { url } = (await res.json()) as BlobResult;
+          const { url } = (await res.json());
           // preload the image
           let image = new Image();
           image.src = url;

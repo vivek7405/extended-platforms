@@ -1,19 +1,25 @@
 import { notFound } from "next/navigation";
+import prisma from "@/prisma";
 import SiteCard from "@/modules/posts/components/site-card";
 import BlurImage from "@/components/blur-image";
 import MDX from "@/components/mdx";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import { getPostData } from "@/modules/posts/fetchers";
+import { getSiteData } from "@/modules/sites/fetchers";
 
 export async function generateMetadata({
   params,
 }: {
   params: { domain: string; slug: string };
 }) {
-  const { domain, slug } = params;
-  const decodedDomain = decodeURIComponent(domain);
-  const data = await getPostData(decodedDomain, slug);
-  if (!data) {
+  const domain = decodeURIComponent(params.domain);
+  const slug = decodeURIComponent(params.slug);
+
+  const [data, siteData] = await Promise.all([
+    getPostData(domain, slug),
+    getSiteData(domain),
+  ]);
+  if (!data || !siteData) {
     return null;
   }
   const { title, description } = data;
@@ -31,7 +37,49 @@ export async function generateMetadata({
       description,
       creator: "@vercel",
     },
+    // Optional: Set canonical URL to custom domain if it exists
+    // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
+    //   siteData.customDomain && {
+    //     alternates: {
+    //       canonical: `https://${siteData.customDomain}/${params.slug}`,
+    //     },
+    //   }),
   };
+}
+
+export async function generateStaticParams() {
+  const allPosts = await prisma.post.findMany({
+    select: {
+      slug: true,
+      site: {
+        select: {
+          subdomain: true,
+          customDomain: true,
+        },
+      },
+    },
+    // // feel free to remove this filter if you want to generate paths for all posts
+    // where: {
+    //   site: {
+    //     subdomain: "demo",
+    //   },
+    // },
+  });
+
+  const allPaths = allPosts
+    .flatMap(({ site, slug }) => [
+      site?.subdomain && {
+        domain: `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`,
+        slug,
+      },
+      site?.customDomain && {
+        domain: site.customDomain,
+        slug,
+      },
+    ])
+    .filter(Boolean);
+
+  return allPaths;
 }
 
 export default async function SitePostPage({
@@ -39,9 +87,9 @@ export default async function SitePostPage({
 }: {
   params: { domain: string; slug: string };
 }) {
-  const { domain, slug } = params;
-  const decodedDomain = decodeURIComponent(domain);
-  const data = await getPostData(decodedDomain, slug);
+  const domain = decodeURIComponent(params.domain);
+  const slug = decodeURIComponent(params.slug);
+  const data = await getPostData(domain, slug);
 
   if (!data) {
     notFound();
@@ -123,7 +171,7 @@ export default async function SitePostPage({
       )}
       {data.adjacentPosts && (
         <div className="mx-5 mb-20 grid max-w-screen-xl grid-cols-1 gap-x-4 gap-y-8 md:grid-cols-2 xl:mx-auto xl:grid-cols-3">
-          {data.adjacentPosts.map((data, index) => (
+          {data.adjacentPosts.map((data: any, index: number) => (
             <SiteCard key={index} data={data} />
           ))}
         </div>

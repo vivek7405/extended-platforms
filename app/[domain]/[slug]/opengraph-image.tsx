@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { truncate } from "@/lib/utils";
-import { ImageResponse } from "next/server";
+import { ImageResponse } from "next/og";
 import { sql } from "@vercel/postgres";
 
 export const runtime = "edge";
@@ -11,16 +11,11 @@ export default async function PostOG({
 }: {
   params: { domain: string; slug: string };
 }) {
-  const { domain, slug } = params;
-  const decodedDomain = decodeURIComponent(domain);
+  const domain = decodeURIComponent(params.domain);
+  const slug = decodeURIComponent(params.slug);
 
-  const subdomain = decodedDomain.endsWith(
-    `.${process.env.NEXT_PUBLIC_DYNAMIC_ROOT_DOMAIN}`,
-  )
-    ? decodedDomain.replace(
-        `.${process.env.NEXT_PUBLIC_DYNAMIC_ROOT_DOMAIN}`,
-        "",
-      )
+  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
+    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
     : null;
 
   const response = await sql`
@@ -31,7 +26,7 @@ export default async function PostOG({
   WHERE 
     (
         site.subdomain = ${subdomain}
-        OR site."customDomain" = ${decodedDomain}
+        OR site."customDomain" = ${domain}
     )
     AND post.slug = ${slug}
   LIMIT 1;

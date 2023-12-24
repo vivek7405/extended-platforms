@@ -2,7 +2,7 @@
 
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
+import { useFormStatus } from "react-dom";
 import { cn } from "@/lib/utils";
 import LoadingDots from "@/components/icons/loading-dots";
 import { useModal } from "../../../components/modal/provider";
