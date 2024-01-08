@@ -1,16 +1,33 @@
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
+import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/prisma";
+import { sendEmail } from "@/modules/emails/actions/send-email";
+import LoginLink from "@/modules/emails/templates/login-link";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    EmailProvider({
+      sendVerificationRequest({ identifier, url }) {
+        if (process.env.NODE_ENV === "development") {
+          console.log(`Login link: ${url}`);
+          return;
+        } else {
+          sendEmail({
+            email: identifier,
+            subject: "Your Dub Login Link",
+            react: LoginLink({ url, email: identifier }),
+          });
+        }
+      },
+    }),
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
       clientSecret: process.env.AUTH_GITHUB_SECRET as string,
-      profile(profile) {
+      profile(profile: any) {
         return {
           id: profile.id.toString(),
           name: profile.name || profile.login,
@@ -44,18 +61,16 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user }: any) => {
       if (user) {
         token.user = user;
       }
       return token;
     },
-    session: async ({ session, token }) => {
+    session: async ({ session, token }: any) => {
       session.user = {
         ...session.user,
-        // @ts-expect-error
         id: token.sub,
-        // @ts-expect-error
         username: token?.user?.username || token?.user?.gh_username,
       };
       return session;

@@ -30,11 +30,17 @@ export const createSite = async (formData: FormData) => {
         name,
         description,
         subdomain,
-        user: {
-          connect: {
-            id: session.user.id,
+        users: {
+          create: {
+            userId: session.user.id,
+            role: "owner",
           },
         },
+        // user: {
+        //   connect: {
+        //     id: session.user.id,
+        //   },
+        // },
       },
     });
     await revalidateTag(
@@ -55,7 +61,7 @@ export const createSite = async (formData: FormData) => {
 };
 
 export const updateSite = withSiteAuth(
-  async (formData: FormData, site: Site, key: string) => {
+  async (site: Site, formData: FormData, key: string) => {
     const value = formData.get(key) as string;
 
     try {
@@ -99,38 +105,38 @@ export const updateSite = withSiteAuth(
         if (site.customDomain && site.customDomain !== value) {
           response = await removeDomainFromVercelProject(site.customDomain);
 
-          /* Optional: remove domain from Vercel team 
-  
-            // first, we need to check if the apex domain is being used by other sites
-            const apexDomain = getApexDomain(`https://${site.customDomain}`);
-            const domainCount = await prisma.site.count({
-              where: {
-                OR: [
-                  {
-                    customDomain: apexDomain,
+          /* Optional: remove domain from Vercel team
+
+          // first, we need to check if the apex domain is being used by other sites
+          const apexDomain = getApexDomain(`https://${site.customDomain}`);
+          const domainCount = await prisma.site.count({
+            where: {
+              OR: [
+                {
+                  customDomain: apexDomain,
+                },
+                {
+                  customDomain: {
+                    endsWith: `.${apexDomain}`,
                   },
-                  {
-                    customDomain: {
-                      endsWith: `.${apexDomain}`,
-                    },
-                  },
-                ],
-              },
-            });
-  
-            // if the apex domain is being used by other sites
-            // we should only remove it from our Vercel project
-            if (domainCount >= 1) {
-              await removeDomainFromVercelProject(site.customDomain);
-            } else {
-              // this is the only site using this apex domain
-              // so we can remove it entirely from our Vercel team
-              await removeDomainFromVercelTeam(
-                site.customDomain
-              );
-            }
-            
-            */
+                },
+              ],
+            },
+          });
+
+          // if the apex domain is being used by other sites
+          // we should only remove it from our Vercel project
+          if (domainCount >= 1) {
+            await removeDomainFromVercelProject(site.customDomain);
+          } else {
+            // this is the only site using this apex domain
+            // so we can remove it entirely from our Vercel team
+            await removeDomainFromVercelTeam(
+              site.customDomain
+            );
+          }
+
+          */
         }
       } else if (key === "image" || key === "logo") {
         if (!process.env.BLOB_READ_WRITE_TOKEN) {
@@ -194,8 +200,9 @@ export const updateSite = withSiteAuth(
   },
 );
 
-export const deleteSite = withSiteAuth(async (_: FormData, site: Site) => {
-  try {
+export const deleteSite = withSiteAuth(
+  async (site: Site, formData: FormData, key: string) => {
+    // try {
     const response = await prisma.site.delete({
       where: {
         id: site.id,
@@ -207,9 +214,10 @@ export const deleteSite = withSiteAuth(async (_: FormData, site: Site) => {
     response.customDomain &&
       (await revalidateTag(`${site.customDomain}-metadata`));
     return response;
-  } catch (error: any) {
-    return {
-      error: error.message,
-    };
-  }
-});
+    // } catch (error: any) {
+    //   return {
+    //     error: error.message,
+    //   };
+    // }
+  },
+);

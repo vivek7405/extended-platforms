@@ -3,8 +3,8 @@ import prisma from "@/prisma";
 
 export function withPostAuth(action: any) {
   return async (
-    formData: FormData | null,
     postId: string,
+    formData: FormData | null,
     key: string | null,
   ) => {
     const session = await getSession();

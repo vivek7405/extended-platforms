@@ -29,7 +29,11 @@ export default function Form({
     maxLength?: number;
     pattern?: string;
   };
-  handleSubmit: any;
+  handleSubmit: (
+    id: string,
+    formData: FormData,
+    key: string,
+  ) => Promise<any>;
 }) {
   const { id } = useParams() as { id?: string };
   const router = useRouter();
@@ -45,7 +49,7 @@ export default function Form({
         ) {
           return;
         }
-        handleSubmit(data, id, inputAttrs.name).then(async (res: any) => {
+        handleSubmit(id || "", data, inputAttrs.name).then(async (res: any) => {
           if (res.error) {
             toast.error(res.error);
           } else {

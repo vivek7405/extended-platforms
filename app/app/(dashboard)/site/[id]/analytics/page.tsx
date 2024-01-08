@@ -16,8 +16,15 @@ export default async function SiteAnalytics({
     where: {
       id: params.id,
     },
+    include: {
+      users: {
+        select: {
+          userId: true,
+        },
+      },
+    },
   });
-  if (!data || data.userId !== session.user.id) {
+  if (!data || !data.users.map((u) => u.userId).includes(session.user.id)) {
     notFound();
   }
 

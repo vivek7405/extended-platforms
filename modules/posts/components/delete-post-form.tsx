@@ -15,7 +15,7 @@ export default function DeletePostForm({ postName }: { postName: string }) {
     <form
       action={async (data: FormData) =>
         window.confirm("Are you sure you want to delete your post?") &&
-        deletePost(data, id, "delete").then((res: any) => {
+        deletePost(id, data, "delete").then((res: any) => {
           if (res.error) {
             toast.error(res.error);
           } else {

@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { getSession } from "@/lib/auth";
 import prisma from "@/prisma";
 import { notFound, redirect } from "next/navigation";
-import SiteSettingsNav from "./nav";
+import SiteSettingsNav from "@/modules/sites/components/nav";
 
 export default async function SiteAnalyticsLayout({
   params,
@@ -19,9 +19,16 @@ export default async function SiteAnalyticsLayout({
     where: {
       id: params.id,
     },
+    include: {
+      users: {
+        select: {
+          userId: true,
+        },
+      },
+    },
   });
 
-  if (!data || data.userId !== session.user.id) {
+  if (!data || !data.users.map((u) => u.userId).includes(session.user.id)) {
     notFound();
   }
 

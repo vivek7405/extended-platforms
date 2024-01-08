@@ -12,20 +12,22 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
+  id                  String      @id @default(cuid())
+  name                String?
   // if you are using Github OAuth, you can get rid of the username attribute (that is for Twitter OAuth)
-  username      String?
-  gh_username   String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  sites         Site[]
-  posts         Post[]
+  username            String?
+  gh_username         String?
+  email               String?     @unique
+  emailVerified       DateTime?
+  image               String?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  accounts            Account[]
+  sessions            Session[]
+  // sites         Site[]
+  posts               Post[]      @relation(name: "createdByUser")
+  postsUpdatedByUsers Post[]      @relation(name: "updatedByUser")
+  sites               SiteUsers[]
 }
 
 model Account {
@@ -70,24 +72,51 @@ model VerificationToken {
 }
 
 model Post {
-  id            String   @id @default(cuid())
-  title         String?  @db.Text
-  description   String?  @db.Text
-  content       String?  @db.Text
-  slug          String   @default(cuid())
-  image         String?  @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png") @db.Text
-  imageBlurhash String?  @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  published     Boolean  @default(false)
-  site          Site?    @relation(fields: [siteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  siteId        String?
-  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId        String?
+  id              String   @id @default(cuid())
+  title           String?  @db.Text
+  description     String?  @db.Text
+  content         String?  @db.Text
+  slug            String   @default(cuid())
+  image           String?  @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png") @db.Text
+  imageBlurhash   String?  @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC") @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  updatedByUser   User?    @relation(name: "updatedByUser", fields: [updatedByUserId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  updatedByUserId String?
+  published       Boolean  @default(false)
+  site            Site?    @relation(fields: [siteId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  siteId          String?
+  user            User?    @relation(name: "createdByUser", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId          String?
 
   @@unique([slug, siteId])
   @@index([siteId])
   @@index([userId])
+}
+
+model SiteInvite {
+  email     String
+  expires   DateTime
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  siteId    String
+  createdAt DateTime @default(now())
+
+  @@unique([email, siteId])
+  @@index([siteId])
+}
+
+model SiteUsers {
+  id        String   @id @default(cuid())
+  role      String   @default("member")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  siteId    String
+
+  @@unique([userId, siteId])
+  @@index([siteId])
 }
 
 model Site {
@@ -103,11 +132,19 @@ model Site {
   message404    String?  @default("Blimey! You've found a page that doesn't exist.") @db.Text
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId        String?
+  // user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  // userId        String?
   posts         Post[]
 
-  @@index([userId])
+  users             SiteUsers[]
+  invites           SiteInvite[]
+  usage             Int          @default(0)
+  usageLimit        Int          @default(1000)
+  plan              String       @default("free")
+  stripeId          String?      @unique // Stripe subscription ID
+  billingCycleStart Int? // day of the month when the billing cycle starts
+
+  // @@index([userId])
 }
 
 model Example {

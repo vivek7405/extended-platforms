@@ -1,8 +1,8 @@
 import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import prisma from "@/prisma";
-import PostCard from "./post-card";
 import Image from "next/image";
+import { redirect } from "next/navigation";
+import PostCard from "./post-card";
 
 export default async function Posts({
   siteId,
@@ -17,14 +17,24 @@ export default async function Posts({
   }
   const posts = await prisma.post.findMany({
     where: {
-      userId: session.user.id as string,
-      ...(siteId ? { siteId } : {}),
+      siteId,
+      // userId: session.user.id as string,
+      // ...(siteId ? { siteId } : {}),
     },
     orderBy: {
       updatedAt: "desc",
     },
     include: {
-      site: true,
+      user: true,
+      site: {
+        include: {
+          users: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      },
     },
     ...(limit ? { take: limit } : {}),
   });

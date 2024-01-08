@@ -1,22 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
-import { useEditor, EditorContent } from "@tiptap/react";
-import { TiptapEditorProps } from "./props";
-import { TiptapExtensions } from "./extensions";
-import { useDebounce } from "use-debounce";
-import { useCompletion } from "ai/react";
-import { toast } from "sonner";
+import { Avatar } from "@/components/avatar";
+import Tooltip from "@/components/tooltip";
+import { cn, timeAgo } from "@/lib/utils";
+import { Post, Site, SiteUsers, User } from "@prisma/client";
+import { EditorContent, useEditor } from "@tiptap/react";
 import va from "@vercel/analytics";
-import TextareaAutosize from "react-textarea-autosize";
-import { EditorBubbleMenu } from "./bubble-menu";
-import { Post } from "@prisma/client";
-import { cn } from "@/lib/utils";
-import LoadingDots from "../../../../components/icons/loading-dots";
+import { useCompletion } from "ai/react";
 import { ExternalLink } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import TextareaAutosize from "react-textarea-autosize";
+import { toast } from "sonner";
+import { useDebounce } from "use-debounce";
+import LoadingDots from "../../../../components/icons/loading-dots";
 import { updatePost, updatePostMetadata } from "../../actions";
+import { EditorBubbleMenu } from "./bubble-menu";
+import { TiptapExtensions } from "./extensions";
+import { TiptapEditorProps } from "./props";
 
-type PostWithSite = Post & { site: { subdomain: string | null } | null };
+type PostWithSite = Post & {
+  user: User | null;
+  updatedByUser: User | null;
+  site: (Site & { users: (SiteUsers & { user: User })[] }) | null;
+};
 
 export default function Editor({ post }: { post: PostWithSite }) {
   let [isPendingSaving, startTransitionSaving] = useTransition();
@@ -176,6 +182,45 @@ export default function Editor({ post }: { post: PostWithSite }) {
 
   return (
     <div className="relative min-h-[500px] w-full max-w-screen-lg border-stone-200 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
+      <div className="absolute left-9 top-5 mb-5 flex items-center space-x-3">
+        <Tooltip
+          content={
+            <div className="w-full p-4">
+              <Avatar
+                user={data?.updatedByUser || data?.user || {}}
+                className="h-10 w-10"
+              />
+              <p className="mt-2 text-sm font-semibold text-gray-700">
+                {data?.updatedByUser?.name ||
+                  data?.updatedByUser?.email ||
+                  data?.user?.name ||
+                  data?.user?.email ||
+                  "Anonymous User"}
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                Updated{" "}
+                {new Date(data?.updatedAt).toLocaleDateString("en-us", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </p>
+            </div>
+          }
+        >
+          {/* Without the wrapping div, the Tooltip won't be triggered for some reason */}
+          <div className="w-5">
+            <Avatar user={data?.user || {}} className="h-5 w-5" />
+          </div>
+        </Tooltip>
+        <p>•</p>
+        <p
+          className="whitespace-nowrap text-sm text-gray-500"
+          suppressHydrationWarning
+        >
+          Updated {timeAgo(data?.updatedAt)}
+        </p>
+      </div>
       <div className="absolute right-5 top-5 mb-5 flex items-center space-x-3">
         {data.published && (
           <a
@@ -196,7 +241,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
             console.log(data.published, typeof data.published);
             formData.append("published", String(!data.published));
             startTransitionPublishing(async () => {
-              await updatePostMetadata(formData, post.id, "published").then(
+              await updatePostMetadata(post.id, formData, "published").then(
                 () => {
                   toast.success(
                     `Successfully ${

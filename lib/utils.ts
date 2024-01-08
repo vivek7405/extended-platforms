@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { customAlphabet } from "nanoid";
+import ms from "ms";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -63,3 +64,17 @@ export const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
   7,
 ); // 7-character random string
+
+export const timeAgo = (timestamp?: Date, timeOnly?: boolean): string => {
+  if (!timestamp) return "never";
+  return `${ms(Date.now() - new Date(timestamp).getTime())}${
+    timeOnly ? "" : " ago"
+  }`;
+};
+
+export class HttpError extends Error {
+  constructor(message: string, status: number) {
+    super(message);
+    status = status;
+  }
+}

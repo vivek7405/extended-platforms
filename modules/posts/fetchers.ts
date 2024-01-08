@@ -1,7 +1,7 @@
 import { replaceExamples, replaceTweets } from "@/lib/remark-plugins";
+import prisma from "@/prisma";
 import { serialize } from "next-mdx-remote/serialize";
 import { unstable_cache } from "next/cache";
-import prisma from "@/prisma";
 
 export async function getPostData(domain: string, slug: string) {
   const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
@@ -17,9 +17,10 @@ export async function getPostData(domain: string, slug: string) {
           published: true,
         },
         include: {
+          user: true,
           site: {
             include: {
-              user: true,
+              users: { include: { user: true } },
             },
           },
         },

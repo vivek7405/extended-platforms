@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { getSiteFromPostId } from "@/modules/posts/actions";
 import {
   ArrowLeft,
   BarChart3,
   Edit3,
+  FileCode,
+  Github,
   Globe,
   Layout,
   LayoutDashboard,
@@ -12,17 +14,15 @@ import {
   Menu,
   Newspaper,
   Settings,
-  FileCode,
-  Github,
 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import {
   useParams,
   usePathname,
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import Image from "next/image";
-import { getSiteFromPostId } from "@/modules/posts/actions";
 
 const externalLinks = [
   {

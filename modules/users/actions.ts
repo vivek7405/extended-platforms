@@ -4,8 +4,8 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/prisma";
 
 export const editUser = async (
+  _id: string,
   formData: FormData,
-  _id: unknown,
   key: string,
 ) => {
   const session = await getSession();

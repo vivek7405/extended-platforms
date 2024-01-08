@@ -2,10 +2,10 @@
 
 import { getSession } from "@/lib/auth";
 import { getBlurDataURL, nanoid } from "@/lib/utils";
-import { put } from "@vercel/blob";
-import { revalidateTag } from "next/cache";
-import { Post, Site } from "@prisma/client";
 import prisma from "@/prisma";
+import { Post, Site } from "@prisma/client";
+import { put } from "@vercel/blob";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { withSiteAuth } from "../sites/auth";
 import { withPostAuth } from "./auth";
 
@@ -21,23 +21,26 @@ export const getSiteFromPostId = async (postId: string) => {
   return post?.siteId;
 };
 
-export const createPost = withSiteAuth(async (_: FormData, site: Site) => {
+export const createPost = withSiteAuth(async (site: Site) => {
   const session = await getSession();
   if (!session?.user.id) {
-    return {
-      error: "Not authenticated",
-    };
+    throw new Error("Not authenticated");
+    // return {
+    //   error: "Not authenticated",
+    // };
   }
   const response = await prisma.post.create({
     data: {
       siteId: site.id,
       userId: session.user.id,
+      updatedByUserId: session.user.id,
     },
   });
 
   await revalidateTag(
     `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
   );
+  // await revalidateTag(`post-${response.id}`);
   site.customDomain && (await revalidateTag(`${site.customDomain}-posts`));
 
   return response;
@@ -56,10 +59,15 @@ export const updatePost = async (data: Post) => {
       id: data.id,
     },
     include: {
-      site: true,
+      site: { include: { users: { include: { user: true } } } },
     },
   });
-  if (!post || post.userId !== session.user.id) {
+  if (
+    !post ||
+    !post?.site?.users
+      ?.map((siteUser) => siteUser?.user.id)
+      ?.includes(session.user.id)
+  ) {
     return {
       error: "Post not found",
     };
@@ -73,6 +81,7 @@ export const updatePost = async (data: Post) => {
         title: data.title,
         description: data.description,
         content: data.content,
+        updatedByUserId: session.user.id,
       },
     });
 
@@ -82,6 +91,7 @@ export const updatePost = async (data: Post) => {
     await revalidateTag(
       `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
     );
+    // await revalidateTag(`post-${response.id}`);
 
     // if the site has a custom domain, we need to revalidate those tags too
     post.site?.customDomain &&
@@ -175,6 +185,7 @@ export const deletePost = withPostAuth(async (_: FormData, post: Post) => {
         siteId: true,
       },
     });
+    await revalidatePath(`/site/${response.siteId}`);
     return response;
   } catch (error: any) {
     return {
