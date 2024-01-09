@@ -9,7 +9,7 @@ export const removeTeammate = async (userId: string, siteId: string) => {
       status: 400,
     };
   }
-  const siteUser = await prisma.siteUsers.findUnique({
+  const siteUser = await prisma.siteUser.findUnique({
     where: {
       userId_siteId: {
         siteId,
@@ -27,7 +27,7 @@ export const removeTeammate = async (userId: string, siteId: string) => {
       status: 400,
     };
   }
-  const response = await prisma.siteUsers.delete({
+  const response = await prisma.siteUser.delete({
     where: {
       userId_siteId: {
         siteId,

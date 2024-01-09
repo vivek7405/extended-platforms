@@ -27,7 +27,7 @@ model User {
   // sites         Site[]
   posts               Post[]      @relation(name: "createdByUser")
   postsUpdatedByUsers Post[]      @relation(name: "updatedByUser")
-  sites               SiteUsers[]
+  sites               SiteUser[]
 }
 
 model Account {
@@ -105,7 +105,7 @@ model SiteInvite {
   @@index([siteId])
 }
 
-model SiteUsers {
+model SiteUser {
   id        String   @id @default(cuid())
   role      String   @default("member")
   createdAt DateTime @default(now())
@@ -136,7 +136,7 @@ model Site {
   // userId        String?
   posts         Post[]
 
-  users             SiteUsers[]
+  users             SiteUser[]
   invites           SiteInvite[]
   usage             Int          @default(0)
   usageLimit        Int          @default(1000)

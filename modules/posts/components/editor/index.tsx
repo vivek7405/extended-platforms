@@ -3,7 +3,7 @@
 import { Avatar } from "@/components/avatar";
 import Tooltip from "@/components/tooltip";
 import { cn, timeAgo } from "@/lib/utils";
-import { Post, Site, SiteUsers, User } from "@prisma/client";
+import { Post, Site, SiteUser, User } from "@prisma/client";
 import { EditorContent, useEditor } from "@tiptap/react";
 import va from "@vercel/analytics";
 import { useCompletion } from "ai/react";
@@ -21,7 +21,7 @@ import { TiptapEditorProps } from "./props";
 type PostWithSite = Post & {
   user: User | null;
   updatedByUser: User | null;
-  site: (Site & { users: (SiteUsers & { user: User })[] }) | null;
+  site: (Site & { users: (SiteUser & { user: User })[] }) | null;
 };
 
 export default function Editor({ post }: { post: PostWithSite }) {

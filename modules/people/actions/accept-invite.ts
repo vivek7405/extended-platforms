@@ -38,7 +38,7 @@ export const acceptInvite = withUserAuth(async (siteId: string) => {
     };
   } else {
     const response = await Promise.all([
-      prisma.siteUsers.create({
+      prisma.siteUser.create({
         data: {
           userId: session?.user?.id || "",
           role: "member",

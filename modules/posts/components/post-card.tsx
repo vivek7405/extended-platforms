@@ -2,7 +2,7 @@ import { Avatar } from "@/components/avatar";
 import BlurImage from "@/components/blur-image";
 import Tooltip from "@/components/tooltip";
 import { placeholderBlurhash, timeAgo } from "@/lib/utils";
-import { Post, Site, SiteUsers, User } from "@prisma/client";
+import { Post, Site, SiteUser, User } from "@prisma/client";
 import Link from "next/link";
 
 export default function PostCard({
@@ -10,7 +10,7 @@ export default function PostCard({
 }: {
   data: Post & {
     user: User | null;
-    site: (Site & { users: (SiteUsers & { user: User })[] }) | null;
+    site: (Site & { users: (SiteUser & { user: User })[] }) | null;
   };
 }) {
   const url = `${data.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`;

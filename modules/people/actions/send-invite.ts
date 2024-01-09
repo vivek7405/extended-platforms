@@ -26,7 +26,7 @@ export const sendInvite = async (email: string, siteId: string) => {
     };
   }
 
-  const alreadyInTeam = await prisma.siteUsers.findFirst({
+  const alreadyInTeam = await prisma.siteUser.findFirst({
     where: {
       siteId: site.id,
       user: {
@@ -43,7 +43,7 @@ export const sendInvite = async (email: string, siteId: string) => {
   }
 
   // if (site.plan === "free") {
-  //   const users = await prisma.siteUsers.count({
+  //   const users = await prisma.siteUser.count({
   //     where: {
   //       siteId: site.id,
   //     },

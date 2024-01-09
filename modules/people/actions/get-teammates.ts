@@ -3,7 +3,7 @@
 import prisma from "@/prisma";
 
 export const getTeammates = async (siteId: string) => {
-  const users = await prisma.siteUsers.findMany({
+  const users = await prisma.siteUser.findMany({
     where: {
       siteId,
     },
