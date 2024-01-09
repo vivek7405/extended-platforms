@@ -170,6 +170,9 @@ dependencies:
   unist-util-visit:
     specifier: ^5.0.0
     version: 5.0.0
+  unsplash-js:
+    specifier: ^7.0.19
+    version: 7.0.19
   use-debounce:
     specifier: ^10.0.0
     version: 10.0.0(react@18.2.0)
@@ -8037,6 +8040,11 @@ packages:
   /universalify@0.2.0:
     resolution: {integrity: sha512-CJ1QgKmNg3CwvAv/kOFmtnEN05f0D/cn9QntgNOQlQF9dgvVTHj3t+8JPdjqawCHk7V/KA+fbUqzZ9XWhcqPUg==}
     engines: {node: '>= 4.0.0'}
+    dev: false
+
+  /unsplash-js@7.0.19:
+    resolution: {integrity: sha512-j6qT2floy5Q2g2d939FJpwey1yw/GpQecFiSouyJtsHQPj3oqmqq3K4rI+GF8vU1zwGCT7ZwIGQd2dtCQLjYJw==}
+    engines: {node: '>=10'}
     dev: false
 
   /update-browserslist-db@1.0.13(browserslist@4.22.1):

@@ -1,9 +1,9 @@
+import Form from "@/components/form";
 import { getSession } from "@/lib/auth";
+import { updatePostMetadata } from "@/modules/posts/actions";
+import DeletePostForm from "@/modules/posts/components/delete-post-form";
 import prisma from "@/prisma";
 import { notFound, redirect } from "next/navigation";
-import Form from "@/components/form";
-import DeletePostForm from "@/modules/posts/components/delete-post-form";
-import { updatePostMetadata } from "@/modules/posts/actions";
 
 export default async function PostSettings({
   params,
@@ -44,7 +44,7 @@ export default async function PostSettings({
         <Form
           title="Thumbnail image"
           description="The thumbnail image for your post. Accepted formats: .png, .jpg, .jpeg"
-          helpText="Max file size 50MB. Recommended size 1200x630."
+          helpText="Max file size 50MB. Recommended size 1200x630. Don't forget to save!"
           inputAttrs={{
             name: "image",
             type: "file",

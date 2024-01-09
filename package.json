@@ -64,6 +64,7 @@
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.8.8",
     "unist-util-visit": "^5.0.0",
+    "unsplash-js": "^7.0.19",
     "use-debounce": "^10.0.0",
     "view": "link:@tiptap/pm/view"
   },

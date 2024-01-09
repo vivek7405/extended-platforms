@@ -1,6 +1,6 @@
-import prisma from "@/prisma";
 import Form from "@/components/form";
 import { updateSite } from "@/modules/sites/actions";
+import prisma from "@/prisma";
 
 export default async function SiteSettingsAppearance({
   params,
@@ -18,7 +18,7 @@ export default async function SiteSettingsAppearance({
       <Form
         title="Thumbnail image"
         description="The thumbnail image for your site. Accepted formats: .png, .jpg, .jpeg"
-        helpText="Max file size 50MB. Recommended size 1200x630."
+        helpText="Max file size 50MB. Recommended size 1200x630. Don't forget to save!"
         inputAttrs={{
           name: "image",
           type: "file",
