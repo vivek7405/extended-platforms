@@ -27,12 +27,28 @@ type PostWithSite = Post & {
 export default function Editor({ post }: { post: PostWithSite }) {
   let [isPendingSaving, startTransitionSaving] = useTransition();
   let [isPendingPublishing, startTransitionPublishing] = useTransition();
+
   const [data, setData] = useState<PostWithSite>(post);
   const [hydrated, setHydrated] = useState(false);
 
   const url = process.env.NEXT_PUBLIC_VERCEL_ENV
     ? `https://${data.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`
     : `http://${data.site?.subdomain}.localhost:3000/${data.slug}`;
+
+  const [debouncedData] = useDebounce(data, 1000);
+  useEffect(() => {
+    // compare the title, description and content only
+    if (
+      debouncedData.title === post.title &&
+      debouncedData.description === post.description &&
+      debouncedData.content === post.content
+    ) {
+      return;
+    }
+    startTransitionSaving(async () => {
+      await updatePost(debouncedData);
+    });
+  }, [debouncedData, post]);
 
   // listen to CMD + S and override the default behavior
   useEffect(() => {
@@ -49,6 +65,120 @@ export default function Editor({ post }: { post: PostWithSite }) {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [data, startTransitionSaving]);
+
+  const editor = useEditor({
+    extensions: TiptapExtensions,
+    editorProps: TiptapEditorProps,
+    onUpdate: (e) => {
+      const selection = e.editor.state.selection;
+      const lastTwo = e.editor.state.doc.textBetween(
+        selection.from - 2,
+        selection.from,
+        "\n",
+      );
+      if (lastTwo === "++" && !isLoading) {
+        e.editor.commands.deleteRange({
+          from: selection.from - 2,
+          to: selection.from,
+        });
+        // we're using this for now until we can figure out a way to stream markdown text with proper formatting: https://github.com/steven-tey/novel/discussions/7
+        complete(
+          `Title: ${data.title}\n Description: ${
+            data.description
+          }\n\n ${e.editor.getText()}`,
+        );
+        // complete(e.editor.storage.markdown.getMarkdown());
+        va.track("Autocomplete Shortcut Used");
+      } else {
+        setData((prev) => ({
+          ...prev,
+          content: e.editor.storage.markdown.getMarkdown(),
+        }));
+      }
+    },
+  });
+
+  const { complete, completion, isLoading, stop } = useCompletion({
+    id: "novel",
+    api: "/api/generate",
+    onFinish: (_prompt, completion) => {
+      editor?.commands.setTextSelection({
+        from: editor.state.selection.from - completion.length,
+        to: editor.state.selection.from,
+      });
+    },
+    onError: (err) => {
+      toast.error(err.message);
+      if (err.message === "You have reached your request limit for the day.") {
+        va.track("Rate Limit Reached");
+      }
+    },
+  });
+
+  const prev = useRef("");
+
+  // Insert chunks of the generated text
+  useEffect(() => {
+    const diff = completion.slice(prev.current.length);
+    prev.current = completion;
+    editor?.commands.insertContent(diff);
+  }, [isLoading, editor, completion]);
+
+  useEffect(() => {
+    // if user presses escape or cmd + z and it's loading,
+    // stop the request, delete the completion, and insert back the "++"
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || (e.metaKey && e.key === "z")) {
+        stop();
+        if (e.key === "Escape") {
+          editor?.commands.deleteRange({
+            from: editor.state.selection.from - completion.length,
+            to: editor.state.selection.from,
+          });
+        }
+        editor?.commands.insertContent("++");
+      }
+    };
+    const mousedownHandler = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      stop();
+      if (window.confirm("AI writing paused. Continue?")) {
+        complete(
+          `Title: ${data.title}\n Description: ${data.description}\n\n ${
+            editor?.getText() || " "
+          }`,
+        );
+      }
+    };
+    if (isLoading) {
+      document.addEventListener("keydown", onKeyDown);
+      window.addEventListener("mousedown", mousedownHandler);
+    } else {
+      document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("mousedown", mousedownHandler);
+    }
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("mousedown", mousedownHandler);
+    };
+  }, [
+    stop,
+    isLoading,
+    editor,
+    complete,
+    completion.length,
+    data.title,
+    data.description,
+  ]);
+
+  // Hydrate the editor with the content
+  useEffect(() => {
+    if (editor && post?.content && !hydrated) {
+      editor.commands.setContent(post.content);
+      setHydrated(true);
+    }
+  }, [editor, post, hydrated]);
 
   return (
     <div className="relative min-h-[500px] w-full max-w-screen-lg border-stone-200 p-12 px-8 dark:border-stone-700 sm:mb-[calc(20vh)] sm:rounded-lg sm:border sm:px-12 sm:shadow-lg">
@@ -154,6 +284,8 @@ export default function Editor({ post }: { post: PostWithSite }) {
           className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
         />
       </div>
+      {editor && <EditorBubbleMenu editor={editor} />}
+      <EditorContent editor={editor} />
     </div>
   );
 }
