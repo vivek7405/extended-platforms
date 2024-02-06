@@ -1,6 +1,5 @@
 "use client";
 
-<<<<<<<< HEAD:modules/posts/components/editor/index.tsx
 import { Avatar } from "@/components/avatar";
 import Tooltip from "@/components/tooltip";
 import { cn, timeAgo } from "@/lib/utils";
@@ -18,17 +17,6 @@ import { updatePost, updatePostMetadata } from "../../actions";
 import { EditorBubbleMenu } from "./bubble-menu";
 import { TiptapExtensions } from "./extensions";
 import { TiptapEditorProps } from "./props";
-========
-import { useEffect, useState, useTransition } from "react";
-import { Post } from "@prisma/client";
-import { updatePost, updatePostMetadata } from "@/lib/actions";
-import { Editor as NovelEditor } from "novel";
-import TextareaAutosize from "react-textarea-autosize";
-import { cn } from "@/lib/utils";
-import LoadingDots from "./icons/loading-dots";
-import { ExternalLink } from "lucide-react";
-import { toast } from "sonner";
->>>>>>>> 29e20e790eaf17d4d5051c23a69636dce724c174:components/editor.tsx
 
 type PostWithSite = Post & {
   user: User | null;
@@ -166,28 +154,6 @@ export default function Editor({ post }: { post: PostWithSite }) {
           className="dark:placeholder-text-600 w-full resize-none border-none px-0 placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
         />
       </div>
-      <NovelEditor
-        className="relative block"
-        defaultValue={post?.content || undefined}
-        onUpdate={(editor) => {
-          setData((prev) => ({
-            ...prev,
-            content: editor?.storage.markdown.getMarkdown(),
-          }));
-        }}
-        onDebouncedUpdate={() => {
-          if (
-            data.title === post.title &&
-            data.description === post.description &&
-            data.content === post.content
-          ) {
-            return;
-          }
-          startTransitionSaving(async () => {
-            await updatePost(data);
-          });
-        }}
-      />
     </div>
   );
 }
