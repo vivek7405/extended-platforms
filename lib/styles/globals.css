@@ -28,6 +28,9 @@
   pointer-events: none;
   height: 0;
 }
+.ProseMirror {
+  padding: 0px !important;
+}
 
 /* Custom image styles */
 

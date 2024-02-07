@@ -71,7 +71,7 @@ export default function PostCard({
               className="whitespace-nowrap text-sm text-gray-500"
               suppressHydrationWarning
             >
-              {timeAgo(data?.createdAt)}
+              Created {timeAgo(data?.createdAt)}
             </p>
           </div>
           <h3 className="my-0 truncate font-cal text-xl font-bold tracking-wide dark:text-white">
