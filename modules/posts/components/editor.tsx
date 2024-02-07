@@ -12,6 +12,7 @@ import LoadingDots from "@/components/icons/loading-dots";
 import { useDebounce } from "use-debounce";
 import { Avatar } from "@/components/avatar";
 import Tooltip from "@/components/tooltip";
+import { set } from "date-fns";
 
 type PostWithSite = Post & {
   user: User | null;
@@ -165,6 +166,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
         />
       </div>
       <NovelEditor
+        key={post?.id}
         className="relative block"
         defaultValue={post?.content || undefined}
         onUpdate={(editor) => {
@@ -173,6 +175,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
             content: editor?.storage.markdown.getMarkdown(),
           }));
         }}
+        disableLocalStorage={true}
         // onDebouncedUpdate={() => {
         //   if (
         //     data.title === post.title &&
