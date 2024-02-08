@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { mutate } from "swr";
 import { Avatar } from "@/components/avatar";
 import { removeTeammate } from "../actions/remove-teammate";
+import { removeInvite } from "../actions/remove-invite";
 
 function RemoveTeammateModal({
   showRemoveTeammateModal,
@@ -35,7 +36,6 @@ function RemoveTeammateModal({
   const [removing, setRemoving] = useState(false);
   const { logo } = useSite();
   const { id: userId, name, email, image } = user;
-  console.log("user image", image);
 
   return (
     <Modal
@@ -75,11 +75,16 @@ function RemoveTeammateModal({
             loading={removing}
             onClick={async () => {
               setRemoving(true);
-              const res = await removeTeammate(userId, siteId);
+              let res = null;
+              if (invite) {
+                res = await removeInvite(email, siteId);
+              } else {
+                res = await removeTeammate(userId, siteId);
+              }
               if (!(res as any)?.error) {
                 await mutate(`${invite ? "invites" : "teammates"}`);
                 toast.success(
-                  `${invite ? "Invite" : "User"} removed from project!`,
+                  `${invite ? "Invite" : "User"} removed from site!`,
                 );
                 setShowRemoveTeammateModal(false);
               } else {
