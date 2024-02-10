@@ -12,7 +12,6 @@ import LoadingDots from "@/components/icons/loading-dots";
 import { useDebounce } from "use-debounce";
 import { Avatar } from "@/components/avatar";
 import Tooltip from "@/components/tooltip";
-import { set } from "date-fns";
 
 type PostWithSite = Post & {
   user: User | null;
