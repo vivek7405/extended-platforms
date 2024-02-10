@@ -167,7 +167,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
       <NovelEditor
         key={post?.id}
         className="relative block"
-        defaultValue={post?.content || undefined}
+        defaultValue={post?.content || ""}
         onUpdate={(editor) => {
           setData((prev) => ({
             ...prev,
