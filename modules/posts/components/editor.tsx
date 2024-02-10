@@ -10,7 +10,7 @@ import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
 import { useDebounce } from "use-debounce";
-import { Avatar } from "@/components/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import Tooltip from "@/components/tooltip";
 
 type PostWithSite = Post & {

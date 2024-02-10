@@ -14,11 +14,11 @@ import { toast } from "sonner";
 import useSWR, { mutate } from "swr";
 import { UserProps } from "../types";
 import Modal from "@/components/modal";
-import BlurImage from "@/components/blur-image";
+import BlurImage from "@/components/ui/blur-image";
 import { getSite } from "@/modules/sites/fetchers";
 import LoadingDots from "@/components/icons/loading-dots";
-import { Avatar } from "@/components/avatar";
-import Button from "@/components/button";
+import { Avatar } from "@/components/ui/avatar";
+import Button from "@/components/ui/button";
 import { setRole } from "../actions/set-role";
 import { Site } from "@prisma/client";
 

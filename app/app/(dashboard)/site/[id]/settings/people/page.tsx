@@ -1,8 +1,8 @@
 "use client";
 
-import { Avatar } from "@/components/avatar";
-import { Badge } from "@/components/badge";
-import BlurImage from "@/components/blur-image";
+import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import BlurImage from "@/components/ui/blur-image";
 import { useEditRoleModal } from "@/modules/people/components/edit-role-modal";
 import { useInviteTeammateModal } from "@/modules/people/components/invite-teammate-modal";
 import { useRemoveTeammateModal } from "@/modules/people/components/remove-teammate-modal";
@@ -12,7 +12,7 @@ import { UserMinus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Popover from "@/components/popover";
-import IconMenu from "@/components/icon-menu";
+import IconMenu from "@/components/ui/icon-menu";
 import ThreeDots from "@/lib/icons/three-dots";
 import useSWR from "swr";
 import { getTeammates } from "@/modules/people/actions/get-teammates";

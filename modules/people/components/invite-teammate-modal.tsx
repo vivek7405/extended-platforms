@@ -9,8 +9,8 @@ import {
 } from "react";
 import va from "@vercel/analytics";
 import { toast } from "sonner";
-import Button from "@/components/button";
-import BlurImage from "@/components/blur-image";
+import Button from "@/components/ui/button";
+import BlurImage from "@/components/ui/blur-image";
 import Modal from "@/components/modal";
 import { useParams } from "next/navigation";
 import { sendInvite } from "../actions/send-invite";

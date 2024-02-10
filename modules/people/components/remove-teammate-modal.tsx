@@ -11,11 +11,11 @@ import { UserProps } from "../types";
 import { useParams, useRouter } from "next/navigation";
 import useSite from "@/lib/swr/use-site";
 import Modal from "@/components/modal";
-import BlurImage from "@/components/blur-image";
-import Button from "@/components/button";
+import BlurImage from "@/components/ui/blur-image";
+import Button from "@/components/ui/button";
 import { toast } from "sonner";
 import { mutate } from "swr";
-import { Avatar } from "@/components/avatar";
+import { Avatar } from "@/components/ui/avatar";
 import { removeTeammate } from "../actions/remove-teammate";
 import { removeInvite } from "../actions/remove-invite";
 

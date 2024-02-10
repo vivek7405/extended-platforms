@@ -1,7 +1,7 @@
 import Link from "next/link";
 import prisma from "@/prisma";
 import { notFound } from "next/navigation";
-import BlurImage from "@/components/blur-image";
+import BlurImage from "@/components/ui/blur-image";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";
 import SiteCard from "@/modules/posts/components/site-card";
 import Image from "next/image";

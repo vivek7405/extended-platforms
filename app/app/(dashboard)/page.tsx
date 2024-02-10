@@ -1,4 +1,4 @@
-import PlaceholderCard from "@/components/placeholder-card";
+import PlaceholderCard from "@/components/ui/placeholder-card";
 import OverviewSitesCTA from "@/modules/overview/components/overview-sites-cta";
 import OverviewStats from "@/modules/overview/components/overview-stats";
 import Posts from "@/modules/posts/components/posts";

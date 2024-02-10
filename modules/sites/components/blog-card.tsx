@@ -1,5 +1,5 @@
 import Link from "next/link";
-import BlurImage from "../../../components/blur-image";
+import BlurImage from "../../../components/ui/blur-image";
 
 import type { Post } from "@prisma/client";
 import { placeholderBlurhash, toDateString } from "@/lib/utils";

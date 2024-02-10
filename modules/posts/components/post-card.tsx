@@ -1,5 +1,5 @@
-import { Avatar } from "@/components/avatar";
-import BlurImage from "@/components/blur-image";
+import { Avatar } from "@/components/ui/avatar";
+import BlurImage from "@/components/ui/blur-image";
 import Tooltip from "@/components/tooltip";
 import { placeholderBlurhash, timeAgo } from "@/lib/utils";
 import { Post, Site, SiteUser, User } from "@prisma/client";

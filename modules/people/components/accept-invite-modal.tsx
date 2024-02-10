@@ -1,6 +1,6 @@
 "use client";
 
-import BlurImage from "@/components/blur-image";
+import BlurImage from "@/components/ui/blur-image";
 import LoadingDots from "@/components/icons/loading-dots";
 import Modal from "@/components/modal";
 import { SiteInvite } from "@prisma/client";

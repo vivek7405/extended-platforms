@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 // import Tooltip from "#/ui/tooltip";
 // import { cn } from "#/lib/utils";
 import { ReactNode } from "react";
-import LoadingDots from "./icons/loading-dots";
-import Tooltip from "./tooltip";
+import LoadingDots from "../icons/loading-dots";
+import Tooltip from "../tooltip";
 
 export default function Button({
   text,
