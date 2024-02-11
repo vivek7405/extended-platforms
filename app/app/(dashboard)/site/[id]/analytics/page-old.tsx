@@ -2,9 +2,8 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/prisma";
 import { notFound, redirect } from "next/navigation";
 import AnalyticsMockup from "@/modules/sites/components/analytics";
-import Analytics from "@/modules/tinybird/components/Analytics";
 
-export default async function CompanyAnalytics({
+export default async function SiteAnalytics({
   params,
 }: {
   params: { id: string };
@@ -15,16 +14,17 @@ export default async function CompanyAnalytics({
   }
   const data = await prisma.site.findUnique({
     where: {
-      id: params.id,
+      id: decodeURIComponent(params.id),
     },
     include: {
-      users: true,
+      users: {
+        select: {
+          userId: true,
+        },
+      },
     },
   });
-  if (
-    !data ||
-    !data.users.map((siteUser) => siteUser.userId).includes(session.user.id)
-  ) {
+  if (!data || !data.users.map((u) => u.userId).includes(session.user.id)) {
     notFound();
   }
 
@@ -40,13 +40,14 @@ export default async function CompanyAnalytics({
           <a
             href={`https://${url}`}
             target="_blank"
+            rel="noreferrer"
             className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
           >
             {url} ↗
           </a>
         </div>
       </div>
-      <Analytics domain={url} />
+      <AnalyticsMockup />
     </>
   );
 }

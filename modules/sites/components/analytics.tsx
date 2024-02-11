@@ -6,7 +6,6 @@ import {
   Title,
   BarList,
   Flex,
-  Grid,
   Bold,
   AreaChart,
 } from "@tremor/react";
@@ -100,7 +99,7 @@ export default function AnalyticsMockup() {
           }
         />
       </Card>
-      <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
+      <div className="grid grid-cols-2 gap-6 lg:grid-cols-3">
         {categories.map(({ title, subtitle, data }) => (
           <Card key={title} className="max-w-lg">
             <Title>{title}</Title>
@@ -147,7 +146,7 @@ export default function AnalyticsMockup() {
             />
           </Card>
         ))}
-      </Grid>
+      </div>
     </div>
   );
 }
