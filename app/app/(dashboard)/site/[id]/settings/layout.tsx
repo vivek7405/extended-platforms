@@ -23,12 +23,15 @@ export default async function SiteAnalyticsLayout({
       users: {
         select: {
           userId: true,
+          role: true,
         },
       },
     },
   });
 
-  if (!data || !data.users.map((u) => u.userId).includes(session.user.id)) {
+  const siteUser = data.users.find((u) => u.userId === session.user.id);
+
+  if (!data || !siteUser) {
     notFound();
   }
 
@@ -53,7 +56,7 @@ export default async function SiteAnalyticsLayout({
           {url} ↗
         </a>
       </div>
-      <SiteSettingsNav />
+      <SiteSettingsNav siteUser={siteUser} />
       {children}
     </>
   );

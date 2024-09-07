@@ -4,7 +4,14 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams, useSelectedLayoutSegment } from "next/navigation";
 
-export default function SiteSettingsNav() {
+export default function SiteSettingsNav({
+  siteUser,
+}: {
+  siteUser: {
+    role: string;
+    userId: string;
+  };
+}) {
   const { id } = useParams() as { id?: string };
   const segment = useSelectedLayoutSegment();
 
@@ -24,12 +31,15 @@ export default function SiteSettingsNav() {
       href: `/site/${id}/settings/appearance`,
       segment: "appearance",
     },
-    {
+  ];
+
+  if (siteUser.role === "owner") {
+    navItems.push({
       name: "People",
       href: `/site/${id}/settings/people`,
       segment: "people",
-    },
-  ];
+    });
+  }
 
   return (
     <div className="flex space-x-4 border-b border-stone-200 pb-4 pt-2 dark:border-stone-700">
